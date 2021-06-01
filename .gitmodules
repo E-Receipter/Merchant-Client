@@ -1,0 +1,3 @@
+[submodule "e-module"]
+	path = e-module
+	url = https://github.com/E-Receipter/E-Receipt-Module/
