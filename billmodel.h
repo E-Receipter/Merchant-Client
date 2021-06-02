@@ -19,8 +19,8 @@ public:
 
     void resetBill();
     void initBill();
-    long getTotalPrice();
-    QString getEncoded();
+    double getTotalPrice();
+    QImage* getEncoded();
 signals:
     void totalPriceChanged(QString &);
 private:
@@ -30,6 +30,9 @@ private:
     QStringList itemName;
     QList<double> price;
     QList<uint> qty;
+
+    QByteArray getProtoBufEncoded();
+    QImage *getJABImage(QByteArray &);
 };
 
 #endif // BILLMODEL_H

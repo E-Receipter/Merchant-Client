@@ -1,5 +1,15 @@
 #include "billmodel.h"
 #include <QDateTime>
+#include <QImage>
+#include "e-module/src/protobuf/main.pb.h"
+#include <fstream>
+extern "C" {
+    #include "e-module/src/E-Receipt/jab_enc.h"
+    #include "e-module/src/E-Receipt/utils.h"
+    #include "e-module/src/jabcode/src/jabcode/include/jabcode.h"
+}
+
+
 BillModel::BillModel(QObject *parent) : QAbstractTableModel(parent)
 {
     this->initBill();
@@ -21,12 +31,41 @@ void BillModel::resetBill() {
     this->initBill();
 }
 
-QString BillModel::getEncoded(){
-    QString data{"hello"};
+QImage* BillModel::getEncoded(){
+    QByteArray data;
+    data = this->getProtoBufEncoded();
+    QImage* image = this->getJABImage(data);
+    return image;
+}
+QByteArray BillModel::getProtoBufEncoded(){
+    QByteArray data;
+    Bill billData;
+    billData.set_billid(this->billId);
+    billData.set_datetime(this->datetime->toMSecsSinceEpoch());
+    for(int i=0;i<this->rowCount()-1;i++){
+        Item *itemData = billData.add_items();
+        itemData->set_name(this->itemName[i].toStdString().data());
+        itemData->set_price(this->price[i]);
+        itemData->set_qty(this->qty[i]);
+    }
+    EncryptedBill ebillData;
+    ebillData.set_shopid(this->shopId);
+    ebillData.set_encryptedbill(billData.SerializeAsString());
+    data = QByteArray::fromStdString(ebillData.SerializeAsString());
     return data;
 }
-long BillModel::getTotalPrice(){
-    long total = 0;
+
+QImage* BillModel::getJABImage(QByteArray &data){
+    int slength = data.toStdString().length();
+    jab_data *jdata = (jab_data*) malloc(sizeof (jab_data)+slength);
+    memcpy(jdata->data,data.toStdString().data(),slength);
+    jab_bitmap* jbitmap =(jab_bitmap*) RG_encode(jdata);
+    QImage *image = new QImage(jbitmap->pixel,jbitmap->width,jbitmap->height,QImage::Format_RGBA8888);
+    return image;
+}
+
+double BillModel::getTotalPrice(){
+    double total = 0;
     for(int i=0;i<this->itemName.length();i++){
         total += this->price[i]*this->qty[i];
     }

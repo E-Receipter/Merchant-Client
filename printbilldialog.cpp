@@ -1,6 +1,7 @@
 #include "printbilldialog.h"
 #include "ui_printbilldialog.h"
-
+#include <QLabel>
+#include <QPixmap>
 PrintBillDialog::PrintBillDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::PrintBillDialog)
@@ -13,7 +14,7 @@ PrintBillDialog::~PrintBillDialog()
     delete ui;
 }
 
-void PrintBillDialog::setData(QString &data){
-    QTextEdit* dataBox = this->findChild<QTextEdit*>("DataBox");
-    dataBox->setText(data);
+void PrintBillDialog::setData(QImage *data){
+    QLabel* display = this->findChild<QLabel*>("JABImage");
+    display->setPixmap(QPixmap::fromImage(*data));
 }

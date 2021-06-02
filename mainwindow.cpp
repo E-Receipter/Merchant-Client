@@ -30,7 +30,7 @@ void MainWindow::on_actionNew_Bill_triggered()
 void MainWindow::on_actionPrint_Bill_triggered()
 {
     PrintBillDialog dialog;
-    QString data = this->billData->getEncoded();
+    QImage *data = this->billData->getEncoded();
     dialog.setData(data);
     dialog.setModal(true);
     dialog.exec();

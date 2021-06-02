@@ -14,7 +14,7 @@ class PrintBillDialog : public QDialog
 public:
     explicit PrintBillDialog(QWidget *parent = nullptr);
     ~PrintBillDialog();
-    void setData(QString &);
+    void setData(QImage*);
 
 private:
     Ui::PrintBillDialog *ui;
