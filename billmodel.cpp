@@ -13,6 +13,11 @@ extern "C" {
 BillModel::BillModel(QObject *parent) : QAbstractTableModel(parent)
 {
     this->initBill();
+    for(int i=0;i<61;i++){
+        this->itemName << "YIPPEE MAGIC MASALA";
+        this->price << 12.95;
+        this->qty << 100;
+    }
 }
 
 void BillModel::initBill(){
@@ -59,6 +64,7 @@ QImage* BillModel::getJABImage(QByteArray &data){
     int slength = data.toStdString().length();
     jab_data *jdata = (jab_data*) malloc(sizeof (jab_data)+slength);
     memcpy(jdata->data,data.toStdString().data(),slength);
+    jdata->length = slength;
     jab_bitmap* jbitmap =(jab_bitmap*) RG_encode(jdata);
     QImage *image = new QImage(jbitmap->pixel,jbitmap->width,jbitmap->height,QImage::Format_RGBA8888);
     return image;

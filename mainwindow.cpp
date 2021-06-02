@@ -12,6 +12,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->billData->setModel(this->billData);
 
     QLineEdit *totalPriceField = this->findChild<QLineEdit*>("TotalPrice");
+    totalPriceField->setText(QString::number(this->billData->getTotalPrice()));
     QObject::connect(this->billData,&BillModel::totalPriceChanged,totalPriceField,&QLineEdit::setText);
 }
 
